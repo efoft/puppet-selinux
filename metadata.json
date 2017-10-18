@@ -1,11 +1,11 @@
 {
         "name": "efoft-selinux",
-        "version": "0.1.1",
+        "version": "1.0.0",
         "author": "efoft",
         "license": "Apache-2.0",
         "source": "https://github.com/efoft/puppet-selinux.git",
         "dependencies": [
-                { "name": "puppetlabs/stdlib" }
+                { "name": "puppetlabs/stdlib", "version_requirement":">=4.17.1 < 5.0.0" }
         ],
         "data_provider": "hiera",
         "operatingsystem_support": [

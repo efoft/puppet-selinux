@@ -1,6 +1,7 @@
-# Build custom policy modile and installs it
+# === Define selinux::audit2allow ===
+# Build custom policy modile from avc-messages and installs the module.
 #
-# === Parameters
+# === Parameters ===
 # [*avc_msg*]
 # Messages from audit.log to use to build policy module.
 #

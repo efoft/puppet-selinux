@@ -1,13 +1,19 @@
+# === Define selinux::fcontext ===
+# Adds SELinux context definition for the specified path in current policy.
+# It ensures that restorecon and new files creation apply correct context.
+#
+# === Parameters ===
+# [*context*]
+#   For example: samba_share_t
+#
+# [*path*]
+# Absolute path to the file or directory.
 #
 define selinux::fcontext(
-  $context    = undef,
-  $path       = undef
+  String $context,
+  Stdlib::Unixpath $path,
 ) {
 
-  if ! $context or ! $path {
-    fail('Parameters context and path are required.')
-  }
-  
   ensure_packages('policycoreutils-python', {'ensure' => 'installed'})
 
   exec { "add_${context}_${path}":

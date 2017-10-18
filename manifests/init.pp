@@ -1,3 +1,4 @@
+# === Class selinux ===
 #
 class selinux(
   Enum['enforcing','permissive','disabled'] $status = 'enforcing',
