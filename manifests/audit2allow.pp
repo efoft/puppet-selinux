@@ -17,10 +17,10 @@
 #
 #
 define selinux::audit2allow (
-  Optional[String] $avc_msg  = undef,
-  Optional[String] $avc_file = undef,
-  String $workdir            = '/usr/share/selinux/local',
-  String $semodule_name      = "local_fix_${title}",
+  Optional[String] $avc_msg       = undef,
+  Optional[String] $avc_file      = undef,
+  String $workdir                 = '/usr/share/selinux/local',
+  Optional[String] $semodule_name = undef,
 ) {
 
   if ! $avc_msg and ! $avc_file {
@@ -32,24 +32,28 @@ define selinux::audit2allow (
 
   ensure_resource('file', $workdir, { 'ensure' => 'directory' })
 
-  file { "${workdir}/avc_${title}.txt":
+  $_title        = regsubst(downcase($title), '[\s-]','_','G')
+  $avcfile  = "${workdir}/avc_${_title}.txt"
+  $semodule = pick($semodule_name, "local_fix_${_title}")
+
+  file { $avcfile:
     ensure  => file,
     content => $avc_msg,
     source  => $avc_file,
     require => File[$workdir],
-    notify  => Exec["build-policy-module-${semodule_name}"],
+    notify  => Exec["build-policy-module-${semodule}"],
   }
 
-  exec { "build-policy-module-${semodule_name}":
-    command     => "audit2allow -i ${workdir}/avc_${title}.txt -M ${semodule_name}",
+  exec { "build-policy-module-${semodule}":
+    command     => "audit2allow -i ${avcfile} -M ${semodule}",
     cwd         => $workdir,
     path        => ['/usr/bin'],
     refreshonly => true,
-    notify      => Exec["install-policy-module-${semodule_name}"],
+    notify      => Exec["install-policy-module-${semodule}"],
   }
 
-  exec { "install-policy-module-${semodule_name}":
-    command     => "semodule -i ${workdir}/${semodule_name}.pp",
+  exec { "install-policy-module-${semodule}":
+    command     => "semodule -i ${workdir}/${semodule}.pp",
     path        => '/usr/sbin',
     refreshonly => true,
   }
