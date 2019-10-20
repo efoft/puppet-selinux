@@ -5,6 +5,8 @@ class selinux(
   Enum['targeted','minimum','mls']          $type   = 'targeted',
 ) {
 
+  ensure_packages('policycoreutils-python', {'ensure' => 'latest'})
+
   file_line { "selinux-${status}":
     path  => '/etc/selinux/config',
     line  => "SELINUX=${status}",
@@ -16,8 +18,6 @@ class selinux(
     line  => "SELINUXTYPE=${type}",
     match => '^SELINUXTYPE=',
   }
-
-  ensure_packages('policycoreutils-python', {'ensure' => 'latest'})
 
   exec { 'selinux-setenforce':
     command => $status ? { 'enforcing' => 'setenforce 1', 'permissive' => 'setenforce 0' },

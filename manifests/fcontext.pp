@@ -14,7 +14,7 @@ define selinux::fcontext(
   Stdlib::Unixpath $path,
 ) {
 
-  ensure_packages('policycoreutils-python', {'ensure' => 'installed'})
+  include selinux
 
   exec { "add_${context}_${path}":
     command   => "semanage fcontext -a -t ${context} \"${path}\"",
